@@ -29,8 +29,9 @@ CSV_OUT_PATH   = Path("/Users/phamkhue/Downloads/savecsv/csvtest.csv")
 TAB_COUNT      = 7
 RESET_POS      = (46,167)
 RESULT_POS     = (444,560)
+
 WAIT_BEFORE        = 2
-WAIT_AFTER_SUBMIT  = 30
+WAIT_AFTER_SUBMIT  = 30   # tổng thời gian chờ sau khi Enter
 WAIT_AFTER_CLICK   = 5
 TYPE_INTERVAL      = 0.10
 COPY_DELAY         = 5.0
@@ -86,7 +87,7 @@ for idx, row in enumerate(emails, 1):
 
     logging.info("➡️ (%d/%d) Checking: %s", idx, len(emails), email)
 
-    # ESC để đóng popup
+    # ESC để đóng popup nếu đang mở
     pyautogui.press('esc')
     time.sleep(0.5)
 
@@ -95,11 +96,20 @@ for idx, row in enumerate(emails, 1):
         pyautogui.press('tab')
         time.sleep(0.3)
 
+    # Nhập email và submit
     pyautogui.write(email, interval=TYPE_INTERVAL)
     time.sleep(0.5)
     pyautogui.press('enter')
-    time.sleep(WAIT_AFTER_SUBMIT)
 
+    # ⬇️ MỚI: sau 5s bấm ESC để đóng quảng cáo/popup tự bật
+    time.sleep(5)
+    pyautogui.press('esc')
+
+    # Chờ nốt phần còn lại của WAIT_AFTER_SUBMIT (không âm)
+    remaining = max(WAIT_AFTER_SUBMIT - 5, 0)
+    time.sleep(remaining)
+
+    # Lấy kết quả
     result = get_result_by_right_click_and_copy()
     row['check_mail'] = result
     results.append(row)
@@ -108,17 +118,14 @@ for idx, row in enumerate(emails, 1):
     pyautogui.click(*RESET_POS)
     time.sleep(WAIT_AFTER_CLICK)
 
-    # Sau mỗi 5 job valid → reload
+    # Sau mỗi 5 job → reload để tránh spam
     if result in ("Valid", "Invalid", "Unknown"):
         validated_count += 1
         if validated_count % 5 == 0:
             logging.info("🔄 Đã kiểm tra 5 email – reload lại để tránh spam")
-
-            # Command + R (reload)
             pyautogui.keyDown('command')
             pyautogui.press('r')
             pyautogui.keyUp('command')
-
             time.sleep(7)
             switch_to_chrome_tab(3)
             time.sleep(2)
