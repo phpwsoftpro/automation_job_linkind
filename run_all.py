@@ -8,8 +8,8 @@ order = [
     "linkin.py",          # 2) ask ChatGPT
     "copy_csv.py",        # 3) duplicate CSV
     "checkmailvalid.py",  # 4) filter mail
-    "goptong.py"          # 5) gop tat ca lai
-    "report.py"          # 5) report
+    "goptong.py",         # 5) gop tat ca lai
+    "report.py"           # 5) report
 ]
 
 for script in order:

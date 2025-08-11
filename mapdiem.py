@@ -129,7 +129,7 @@ def go_to_next_page():
     time.sleep(3)
 
 if __name__ == "__main__":
-    total_jobs_to_process = 5
+    total_jobs_to_process = 10
 
     activate_chrome()
     image_folder.mkdir(parents=True, exist_ok=True)
