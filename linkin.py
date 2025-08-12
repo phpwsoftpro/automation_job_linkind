@@ -41,6 +41,14 @@ Wrap the entire response in a single code block using triple backticks.
 '''
 
 # ====== Helper ======
+def activate_chrome():
+    """Đảm bảo Chrome đang active trước khi gửi hotkey."""
+    try:
+        subprocess.run(["osascript", "-e", 'tell application "Google Chrome" to activate'], check=False)
+        time.sleep(0.2)
+    except Exception:
+        pass
+
 def copy_file_to_clipboard_mac(filepath: str):
     applescript = f'''
     set theFile to POSIX file "{filepath}" as alias
@@ -116,6 +124,7 @@ def handle_one_image(image_path: Path, output_txt_path: Path):
     copy_file_to_clipboard_mac(str(image_path))
 
     # New chat
+    activate_chrome()
     pyautogui.hotkey('command', 'shift', 'o')
     time.sleep(1.2)
 
@@ -176,6 +185,14 @@ image_files = sorted(
 
 rows = []
 for idx, image_path in enumerate(image_files, start=1):
+    # === Reset trang sau mỗi 10 ảnh ===
+    # Ví dụ: sau khi xong ảnh 10, tới ảnh 11 (idx % 10 == 1 và idx != 1) thì refresh trước khi thao tác
+    if idx % 10 == 1 and idx != 1:
+        print("🔄 Đang reset trang để tránh limit...")
+        activate_chrome()
+        pyautogui.hotkey('command', 'r')
+        time.sleep(10)  # đợi trang load xong rồi mới làm ảnh tiếp theo
+
     txt_path = output_folder / image_path.with_suffix(".txt").name
     print(f"📸 ({idx}) Đang xử lý ảnh: {image_path.name}")
 
