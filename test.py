@@ -2,7 +2,7 @@ import pyautogui
 import time
 
 # Tọa độ bạn muốn di chuột đến
-x = 444
+x = 425
 y = 560
 
 print("⏳ Đợi 2 giây rồi di chuột...")

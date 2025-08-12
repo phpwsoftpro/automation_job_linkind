@@ -22,13 +22,15 @@ def switch_to_chrome_tab(tab_index: int = 3, wait: float = 1.5):
     subprocess.run(["osascript", "-e", applescript])
     time.sleep(wait)
 
+# Mở Chrome sang tab 3
 switch_to_chrome_tab(3)
 
+# === Cấu hình đường dẫn/toạ độ ===
 CSV_PATH       = Path("/Users/phamkhue/Downloads/savecsv/full_company_info.csv")
 CSV_OUT_PATH   = Path("/Users/phamkhue/Downloads/savecsv/csvtest.csv")
 TAB_COUNT      = 7
 RESET_POS      = (46,167)
-RESULT_POS     = (444,560)
+RESULT_POS     = (425,560)
 
 WAIT_BEFORE        = 2
 WAIT_AFTER_SUBMIT  = 30   # tổng thời gian chờ sau khi Enter
@@ -46,6 +48,7 @@ logging.warning("⚠️ Hãy tắt Caps Lock trước khi chạy script!")
 time.sleep(WAIT_BEFORE)
 
 def get_result_by_right_click_and_copy() -> str:
+    # Xoá clipboard rồi copy kết quả
     pyperclip.copy("")
     pyautogui.click(*RESULT_POS, button='right')
     time.sleep(COPY_DELAY)
@@ -87,7 +90,7 @@ for idx, row in enumerate(emails, 1):
 
     logging.info("➡️ (%d/%d) Checking: %s", idx, len(emails), email)
 
-    # ESC để đóng popup nếu đang mở
+    # ESC để đóng popup nếu đang mở (trước khi thao tác)
     pyautogui.press('esc')
     time.sleep(0.5)
 
@@ -101,9 +104,11 @@ for idx, row in enumerate(emails, 1):
     time.sleep(0.5)
     pyautogui.press('enter')
 
-    # ⬇️ MỚI: sau 5s bấm ESC để đóng quảng cáo/popup tự bật
+    # ⬇️ Sau 5s bấm ESC 5 lần (mỗi lần cách 0.5s) để đóng mọi popup/quảng cáo
     time.sleep(5)
-    pyautogui.press('esc')
+    for _ in range(5):
+        pyautogui.press('esc')
+        time.sleep(0.5)
 
     # Chờ nốt phần còn lại của WAIT_AFTER_SUBMIT (không âm)
     remaining = max(WAIT_AFTER_SUBMIT - 5, 0)
